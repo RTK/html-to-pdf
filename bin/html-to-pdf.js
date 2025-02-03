@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import * as path from 'node:path';
 import { parseArgs } from 'node:util';
 import { launch } from 'puppeteer';
