@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
+        "target": "ESNext",
+        "types": ["node"],
+        "outDir": "bin"
+    },
+  "files": ["src/html-to-pdf.ts"]
+}
