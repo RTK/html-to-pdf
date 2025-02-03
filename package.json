@@ -4,7 +4,7 @@
         "name": "Rouven T. Kruse",
         "email": "mail@rouvenkruse.de"
     },
-    "version": "0.0.1",
+    "version": "1.0.0",
     "engines": {
         "node": ">=22.0.0"
     },
