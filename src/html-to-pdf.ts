@@ -1,9 +1,10 @@
 import * as path from 'node:path';
+import * as url from 'node:url';
 import {parseArgs} from 'node:util';
 
-import {type Browser, launch, Page} from 'puppeteer';
+import {type Browser, launch, type Page, type PaperFormat} from 'puppeteer';
 
-const { values } = parseArgs({
+const {values} = parseArgs({
     args: process.argv.splice(2),
     strict: true,
     options: {
@@ -12,14 +13,35 @@ const { values } = parseArgs({
         },
         output: {
             type: 'string'
+        },
+        format: {
+            type: 'string',
+            default: 'A4'
         }
     }
 });
 
+const paperFormats: ReadonlyArray<PaperFormat> = [
+    'A0',
+    'A1',
+    'A2',
+    'A3',
+    'A4',
+    'A5',
+    'A6',
+    'Letter',
+    'Legal',
+    'Tabloid',
+    'Ledger'
+];
+
 const input: string | undefined = values.input as string | undefined;
 const output: string | undefined = values.output as string | undefined;
 
+const format: string = values.format;
+
 const isInputWebUri: boolean = input && /^https?:\/\//.test(input);
+const isInputFileUri: boolean = input && /^file:\/\//.test(input);
 
 if (!input) {
     throw 'Specify input file';
@@ -33,16 +55,22 @@ if (!output) {
     throw 'Must provide pdf file as output';
 }
 
+if (!paperFormats.includes(format as PaperFormat)) {
+    throw `Unknown format provided ${format}. Allowed Values: ${paperFormats.join(', ')}`;
+}
+
 const cwd: string = process.cwd();
 
-let url: string = input;
-if (!isInputWebUri) {
-    url = path.isAbsolute(input) ? input : path.join(cwd, input);
+let browserUrl: string = input;
+if (!isInputWebUri && !isInputFileUri) {
+    browserUrl = url
+        .pathToFileURL(path.isAbsolute(input) ? input : path.join(cwd, input))
+        .toString();
 }
 
 const browser: Browser = await launch();
 const page: Page = await browser.newPage();
-await page.goto(url);
+await page.goto(browserUrl);
 await page.setViewport({
     width: 1920,
     height: 1080
