@@ -1,3 +1,4 @@
+#!/usr/node/env node
 import * as path from 'node:path';
 import * as url from 'node:url';
 import { parseArgs } from 'node:util';
